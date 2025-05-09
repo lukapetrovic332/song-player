@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Song Player</title>
+  <link rel="stylesheet" href="output.css">
+</head>
+<body class="bg-gray-900 text-white font-sans">
+
+  <!-- Big Container for Song Elements -->
+  <div class="song-container flex flex-col items-center justify-center h-screen space-y-6 p-6">
+
+    <!-- Song Cover -->
+    <div class="w-64 h-64 rounded-lg overflow-hidden shadow-lg">
+      <img src="songs/sample-cover.jpg" alt="Song Cover" class="w-full h-full object-cover">
+    </div>
+
+    <!-- Song Title -->
+    <h1 class="text-2xl font-semibold">Song Title</h1>
+
+    <!-- Audio Controls -->
+    <div class="flex items-center space-x-4">
+      <!-- Previous Button -->
+      <button id="prevBtn" class="bg-gray-700 hover:bg-gray-600 p-2 rounded-full">
+        <span class="text-xl">&lt;&lt;</span>
+      </button>
+      
+      <!-- Play/Pause Button -->
+      <button id="playPauseBtn" class="bg-blue-600 hover:bg-blue-500 p-4 rounded-full">
+        <span id="playPauseIcon" class="text-2xl">▶</span>
+      </button>
+      
+      <!-- Next Button -->
+      <button id="nextBtn" class="bg-gray-700 hover:bg-gray-600 p-2 rounded-full">
+        <span class="text-xl">&gt;&gt;</span>
+      </button>
+    </div>
+
+    <!-- Progress Bar -->
+    <input type="range" id="progressBar" value="0" max="100" class="w-2/3 h-2 bg-gray-600 rounded-full cursor-pointer">
+    
+    <!-- Volume Control -->
+    <div class="flex items-center space-x-2">
+      <label for="volume" class="text-sm">Volume</label>
+      <input type="range" id="volume" value="100" max="100" class="w-32 h-2 bg-gray-600 rounded-full cursor-pointer">
+    </div>
+
+    <!-- Audio Element (Hidden) -->
+    <audio id="audioPlayer" class="hidden">
+      <source src="songs/ZEZE.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <!-- Scripts to Control Audio -->
+  <script>
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const playPauseIcon = document.getElementById('playPauseIcon');
+    const progressBar = document.getElementById('progressBar');
+    const volumeControl = document.getElementById('volume');
+
+    // Play/Pause Button
+    playPauseBtn.addEventListener('click', () => {
+      if (audioPlayer.paused) {
+        audioPlayer.play();
+        playPauseIcon.textContent = '❚❚'; // Change icon to pause
+      } else {
+        audioPlayer.pause();
+        playPauseIcon.textContent = '▶'; // Change icon to play
+      }
+    });
+
+    // Update Progress Bar as Song Plays
+    audioPlayer.addEventListener('timeupdate', () => {
+      const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+      progressBar.value = progress;
+    });
+
+    // Change Song Progress
+    progressBar.addEventListener('input', () => {
+      audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
+    });
+
+    // Adjust Volume
+    volumeControl.addEventListener('input', () => {
+      audioPlayer.volume = volumeControl.value / 100;
+    });
+  </script>
+
+</body>
+</html>
