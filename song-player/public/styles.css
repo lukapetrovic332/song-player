@@ -1,3 +1,99 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Glassmorphism Container */
+.glass-container {
+  @apply backdrop-blur-lg bg-white/10 border border-white/20 w-[90%] max-w-2xl;
+}
+
+/* Fancy Buttons */
+.control-btn {
+  @apply text-3xl text-white bg-gray-700 hover:bg-gray-600 p-4 rounded-full transition ease-in-out duration-300 shadow-lg;
+}
+
+.control-btn:hover {
+  @apply scale-110 shadow-blue-500/50;
+}
+
+/* Trackline Styling (Progress Bar) */
+.trackline {
+  @apply w-full h-2 bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 rounded-lg cursor-pointer;
+}
+
+/* Volume Control Styling */
+.volume-line {
+  @apply bg-white/50 rounded-full cursor-pointer;
+}
+
+
+     body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #1a1a1a;
+      font-family: sans-serif;
+    }
+
+    .glass-container {
+      width: 600px;
+      padding: 25px;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .cover-img {
+      width: 250px;
+      height: 250px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .trackline {
+      flex: 1;
+      margin-right: 10px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      appearance: none;
+    }
+
+    .volume-line {
+      width: 80px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      appearance: none;
+    }
+
+    .control-btn {
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .control-btn:hover {
+      transform: scale(1.1);
+    }
+
+    #play{
+     padding-right:20 px;
+    }

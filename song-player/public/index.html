@@ -5,77 +5,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Song Player</title>
   <link rel="stylesheet" href="output.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Subtle scale and shadow on control buttons */
+    .control-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Centering the cover image */
+    .cover-image {
+      position: relative;
+      z-index: 10; /* Ensure it is on top */
+    }
+
+    /* Lyrics Overlay Styling */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999; /* Make sure it appears on top */
+    }
+
+    .overlay-content {
+      background-color: #333;
+      padding: 20px;
+      max-width: 80%;
+      max-height: 80%;
+      overflow-y: auto;
+      border-radius: 10px;
+      color: white;
+      font-family: 'Futura', sans-serif;
+      text-align: center;
+    }
+
+    /* Close button in the overlay */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #f44336; /* Red close button */
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 50%;
+    }
+
+    .close-btn:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Lyrics icon */
+    .lyrics-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 24px;
+      color: white;
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
+<body>
 
-  <!-- Big Container for Song Elements -->
-  <div class="song-container flex flex-col items-center justify-center h-screen space-y-6 p-6">
-
-    <!-- Song Cover -->
-    <div class="w-64 h-64 rounded-lg overflow-hidden shadow-lg">
-      <img src="songs/sample-cover.jpg" alt="Song Cover" class="w-full h-full object-cover">
+  <!-- Main Player Container (Glassmorphic) -->
+  <div class="glass-container">
+    <div class="cover-img">
+      <img src="https://pan-mag.com/wp-content/uploads/2020/07/Kodak-Black-ZeZe-Feature.jpg" alt="Song Cover" class="w-full h-full object-cover">
     </div>
 
-    <!-- Song Title -->
-    <h1 class="text-2xl font-semibold">Song Title</h1>
-
-    <!-- Audio Controls -->
-    <div class="flex items-center space-x-4">
-      <!-- Previous Button -->
-      <button id="prevBtn" class="bg-gray-700 hover:bg-gray-600 p-2 rounded-full">
-        <span class="text-xl">&lt;&lt;</span>
-      </button>
-      
-      <!-- Play/Pause Button -->
-      <button id="playPauseBtn" class="bg-blue-600 hover:bg-blue-500 p-4 rounded-full">
-        <span id="playPauseIcon" class="text-2xl">▶</span>
-      </button>
-      
-      <!-- Next Button -->
-      <button id="nextBtn" class="bg-gray-700 hover:bg-gray-600 p-2 rounded-full">
-        <span class="text-xl">&gt;&gt;</span>
-      </button>
+    <div class="controls">
+      <button class="control-btn">⏮️</button>
+      <button class="control-btn" id="play">▶</button>
+      <button class="control-btn">⏭️</button>
     </div>
 
-    <!-- Progress Bar -->
-    <input type="range" id="progressBar" value="0" max="100" class="w-2/3 h-2 bg-gray-600 rounded-full cursor-pointer">
-    
-    <!-- Volume Control -->
-    <div class="flex items-center space-x-2">
-      <label for="volume" class="text-sm">Volume</label>
-      <input type="range" id="volume" value="100" max="100" class="w-32 h-2 bg-gray-600 rounded-full cursor-pointer">
+    <div class="controls">
+      <input type="range" id="progressBar" value="0" max="100" class="trackline">
+      <input type="range" id="volume" value="100" max="100" class="volume-line">
     </div>
 
-    <!-- Audio Element (Hidden) -->
+    <!-- Icon to open lyrics overlay -->
+    <div class="lyrics-icon" onclick="openOverlay()">🎵</div>
+
     <audio id="audioPlayer" class="hidden">
       <source src="songs/ZEZE.mp3" type="audio/mpeg">
       Your browser does not support the audio element.
     </audio>
   </div>
 
-  <!-- Scripts to Control Audio -->
+  <!-- Lyrics Overlay -->
+  <div id="lyrics-overlay" class="overlay">
+    <div class="overlay-content">
+      <button onclick="closeOverlay()" class="close-btn">X</button>
+      <div id="lyrics"></div> <!-- Lyrics content will be loaded here -->
+    </div>
+  </div>
+
   <script>
     const audioPlayer = document.getElementById('audioPlayer');
-    const playPauseBtn = document.getElementById('playPauseBtn');
-    const playPauseIcon = document.getElementById('playPauseIcon');
     const progressBar = document.getElementById('progressBar');
     const volumeControl = document.getElementById('volume');
+    const playPauseBtn = document.querySelector('.control-btn:nth-child(2)');
 
-    // Play/Pause Button
+    // Play/Pause Toggle
     playPauseBtn.addEventListener('click', () => {
       if (audioPlayer.paused) {
         audioPlayer.play();
-        playPauseIcon.textContent = '❚❚'; // Change icon to pause
+        playPauseBtn.textContent = '⏸️';
       } else {
         audioPlayer.pause();
-        playPauseIcon.textContent = '▶'; // Change icon to play
+        playPauseBtn.textContent = '▶';
       }
     });
 
-    // Update Progress Bar as Song Plays
+    // Update Progress Bar
     audioPlayer.addEventListener('timeupdate', () => {
-      const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-      progressBar.value = progress;
+      progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
     });
 
     // Change Song Progress
@@ -85,8 +140,72 @@
 
     // Adjust Volume
     volumeControl.addEventListener('input', () => {
-      audioPlayer.volume = volumeControl.value / 100;
+      audioPlayer.volume = volumeControl.value / 200;
     });
+
+    // Fade out function
+    function fadeOut(audioElement, duration) {
+      let fadeInterval = 1000; // Interval time in milliseconds
+      let fadeOutSteps = duration / fadeInterval; // How many steps for the fade
+      let fadeStep = audioElement.volume / fadeOutSteps; // Volume decrease per step
+
+      let fadeOutInterval = setInterval(() => {
+        if (audioElement.volume > 0) {
+          audioElement.volume -= fadeStep;
+        } else {
+          clearInterval(fadeOutInterval); // Stop the interval once volume is 0
+          audioElement.pause(); // Pause the audio
+        }
+      }, fadeInterval);
+    }
+
+    // Lyrics Syncing
+    const lyrics = [
+      { "time": 0, "text": "D.A. got that dope" },
+      { "time": 3, "text": "Ice water, turned Atlantic (freeze)" },
+      { "time": 6, "text": "Night crawlin' in the Phantom (skrrt, skrrt)" },
+      { "time": 9, "text": "Told 'em hoes that don't you panic" },
+      { "time": 12, "text": "Took an island, flood the mansion (big water)" },
+      // Add more lyrics with timestamps
+    ];
+
+    // Get the overlay and lyrics elements
+    const overlay = document.getElementById("lyrics-overlay");
+    const lyricsDisplay = document.getElementById("lyrics");
+
+    // Open lyrics overlay
+    function openOverlay() {
+      overlay.style.display = "flex";
+      loadLyrics();
+    }
+
+    // Close lyrics overlay
+    function closeOverlay() {
+      overlay.style.display = "none";
+    }
+
+    // Load lyrics into overlay
+    function loadLyrics() {
+      let lyricsText = '';
+      lyrics.forEach(lyric => {
+        lyricsText += `<p>${lyric.text}</p>`;
+      });
+      lyricsDisplay.innerHTML = lyricsText;
+    }
+
+    // Update lyrics based on song time
+    function updateLyrics() {
+      let currentTime = audioPlayer.currentTime;
+      for (let i = 0; i < lyrics.length; i++) {
+        if (currentTime >= lyrics[i].time && (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)) {
+          lyricsDisplay.innerText = lyrics[i].text;
+          break;
+        }
+      }
+    }
+
+    // Update lyrics every 100ms
+    setInterval(updateLyrics, 100);
   </script>
 
 </body>
